@@ -1,6 +1,7 @@
 const { default: axios } = require('axios');
 const URL = require('url');
 const download = require('./download');
+const logger = require('./log.js');
 
 module.exports = class Misskey{
   constructor(save_dir, orig_filename){
@@ -18,21 +19,21 @@ module.exports = class Misskey{
     try{
       const post_request = await axios.post(`${instance_domain}/api/notes/show`, { noteId: note_id });
 
-      console.log('Post found.');
+      logger.info('Post found.');
 
       const post_data = post_request.data;
 
       if(!(post_data.visibility === 'public' || post_data.visibility === 'home')){
-        console.log("Private Post.");
+        logger.error("Private Post.");
         throw "private";
       }
 
       if(post_data.uri){
-        console.log("Info: Remote Post. The original post may be of higher quality.");
+        logger.info("Remote Post. The original post may be of higher quality.");
       }
 
       if(!post_data.files || post_data.files.length < 1){
-        console.log('No attachments.');
+        logger.error('No attachments.');
         throw "no_files";
       }
 
@@ -51,7 +52,7 @@ module.exports = class Misskey{
         await download(file.url, this.save_dir, filename);
 
         image_counter++;
-        console.log(`File downloaded. (${file.name} also known as ${filename})`);
+        logger.info(`File downloaded. (${file.name} also known as ${filename})`);
       }
     }catch(e){
       throw e;
