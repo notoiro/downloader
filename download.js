@@ -59,7 +59,8 @@ module.exports = async (url, save_dir, filename) => {
 
         if(!confirm_result) throw "exist file!";
       }else{
-        logger.info('The file existed, but the contents were the same, so it was overwritten and saved.');
+        logger.info('Skip because the file exists and the content is the same.');
+        return null;
       }
     }
 
