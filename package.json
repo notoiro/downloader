@@ -10,6 +10,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "axios": "^1.6.8",
+    "cac": "^6.7.14",
+    "clipboardy": "^4.0.0",
     "enquirer": "^2.4.1",
     "readable-stream-clone": "^1.0.0",
     "xa": "^2.4.0"
