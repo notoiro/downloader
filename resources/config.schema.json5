@@ -1,0 +1,8 @@
+{
+  MISSKEY_TOKEN: {
+    type: "string",
+    required: false,
+    non_empty: false,
+    disallow: ["YOUR_TOKEN"],
+  },
+}

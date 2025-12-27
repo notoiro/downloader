@@ -2,6 +2,7 @@ const { default: axios } = require('axios');
 const URL = require('url');
 const download = require('./download');
 const logger = require('./log.js');
+const config = require("./config.js");
 
 module.exports = class Misskey{
   constructor(save_dir, orig_filename){
@@ -17,7 +18,9 @@ module.exports = class Misskey{
     const instance_domain = parse_post_url.protocol + "//" + parse_post_url.host;
 
     try{
-      const post_request = await axios.post(`${instance_domain}/api/notes/show`, { noteId: note_id });
+      let header = {};
+      if(config.MISSKEY_TOKEN) header.Authorization = `Bearer ${config.MISSKEY_TOKEN}`;
+      const post_request = await axios.post(`${instance_domain}/api/notes/show`, { noteId: note_id }, {headers : header} );
 
       logger.info('Post found.');
 
