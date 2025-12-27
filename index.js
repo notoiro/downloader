@@ -6,6 +6,7 @@ const home_path = process.env[process.platform == "win32" ? "USERPROFILE" : "HOM
 const path = require('path');
 const cac = require('cac');
 const Clipboard = require('./clipboard.js');
+const notifier = require('node-notifier');
 
 const cli = cac();
 
@@ -42,6 +43,10 @@ const main = async () => {
     clipboard.on('update', async (current) => {
       try{
         await misskey.download(current);
+        notifier.notify({
+          title: "downloader",
+          message:"All downloads are complete." 
+        });
         logger.success("All downloads are complete.");
       }catch(e){
         logger.error(`Download failed. ${e}`);
@@ -62,7 +67,7 @@ const main = async () => {
       await misskey.download(post_url);
       logger.success("All downloads are complete.");
     }catch(e){
-      logger.error(`Download failed. ${e}`);
+      logger.error(`Download failed. ${JSON.stringify(e)}`);
     }
   }
 }
