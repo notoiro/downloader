@@ -1,5 +1,5 @@
 const { default: axios } = require('axios');
-const URL = require('url');
+const { URL } = require('url');
 const download = require('./download');
 const logger = require('./log.js');
 const config = require("./config.js");
@@ -11,8 +11,7 @@ module.exports = class Misskey{
   }
 
   async download(post_url){
-    // TODO: parseが非推奨になってる
-    const parse_post_url = URL.parse(post_url);
+    const parse_post_url = new URL(post_url);
 
     const note_id = parse_post_url.pathname.match(/notes\/(.+)/)[1];
     const instance_domain = parse_post_url.protocol + "//" + parse_post_url.host;
