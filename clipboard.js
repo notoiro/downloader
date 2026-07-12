@@ -29,12 +29,23 @@ module.exports = class Clipboard{
   }
 
   start(){
-    this.prev = clipboard.readSync();
+    try{
+      this.prev = clipboard.readSync();
+    }catch(e){
+      this.prev = "";
+    }
+
     this.check_interval = setInterval(this.check.bind(this), 500);
   }
 
   check(){
-    const current = clipboard.readSync();
+    let current;
+    try{
+      current = clipboard.readSync();
+    }catch(e){
+      current = this.prev;
+    }
+
     if(this.prev === current) return;
 
     this.prev = current;
