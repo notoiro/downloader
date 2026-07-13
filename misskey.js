@@ -18,7 +18,10 @@ module.exports = class Misskey{
 
     try{
       let header = {};
-      if(config.MISSKEY_TOKEN) header.Authorization = `Bearer ${config.MISSKEY_TOKEN}`;
+      if(config.MISSKEY_HOST === parse_post_url.host){
+        if(config.MISSKEY_TOKEN) header.Authorization = `Bearer ${config.MISSKEY_TOKEN}`;
+      }
+
       const post_request = await axios.post(`${instance_domain}/api/notes/show`, { noteId: note_id }, {headers : header} );
 
       logger.info('Post found.');
