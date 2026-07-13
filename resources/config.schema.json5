@@ -5,4 +5,10 @@
     non_empty: false,
     disallow: ["YOUR_TOKEN"],
   },
+  MISSKEY_HOST: {
+    type: "string",
+    required: false,
+    non_empty: false,
+    disallow: ["YOUR_HOST"],
+  },
 }
