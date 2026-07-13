@@ -50,7 +50,7 @@ node index.js -c
 ### 補足: Twitterのダウンロードについて
 
 現在の仕様では、Twitterのダウンロードは通常のツイートURL (`https://twitter.com/...`) には対応していません。
-[oldtwitter-copy-info.user.js](https://github.com/notoiro/downloader/blob/main/resources/oldtwitter-copy-info.user.js ) などのユーザースクリプトを使用して取得できる特殊な形式の文字列をクリップボードにコピーすることで動作します。
+[oldtwitter-copy-info.user.js](./resources/oldtwitter-copy-info.user.js ) などのユーザースクリプトを使用して取得できる特殊な形式の文字列をクリップボードにコピーすることで動作します。
 
 ## 設定
 
