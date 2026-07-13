@@ -1,5 +1,6 @@
 const { Input, Confirm } = require("enquirer");
 const Misskey = require("./misskey.js");
+const Twitter = require('./twitter.js');
 const logger = require('./log.js');
 const fs = require('fs');
 const home_path = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
@@ -33,21 +34,33 @@ const main = async () => {
     process.exit(1);
   }
 
-  const filename_orig_confirm = new Confirm({ message: "Do you want to keep the original filename?" });
+  const filename_orig_confirm = new Confirm({ message: "Do you want to keep the original filename?(Misskey)" });
   const filename_orig = await filename_orig_confirm.run();
 
   const misskey = new Misskey(save_dir, filename_orig);
+  const twitter = new Twitter(save_dir);
 
   if(opt.options.clipboard){
     clipboard = new Clipboard();
     clipboard.on('update', async (current) => {
       try{
-        await misskey.download(current);
-        notifier.notify({
-          title: "downloader",
-          message:"All downloads are complete." 
-        });
-        logger.success("All downloads are complete.");
+        const isMisskey = await misskey.check(current);
+        const isTwitter = twitter.check(current); 
+        if(isMisskey){
+          await misskey.download(current);
+          notifier.notify({
+            title: "downloader",
+            message:"All downloads are complete." 
+          });
+          logger.success("All downloads are complete.");
+        }else if(isTwitter){
+          await twitter.download(current);
+          notifier.notify({
+            title: "downloader",
+            message:"All downloads are complete." 
+          });
+          logger.success("All downloads are complete.");
+        }
       }catch(e){
         logger.error(`Download failed. ${e}`);
       }
@@ -64,10 +77,20 @@ const main = async () => {
     const post_url = await post_url_input.run();
 
     try{
-      await misskey.download(post_url);
-      logger.success("All downloads are complete.");
+      const isMisskey = await misskey.check(post_url);
+      const isTwitter = twitter.check(post_url); 
+      if(isMisskey){
+        await misskey.download(post_url);
+        logger.success("All downloads are complete.");
+      }else if(isTwitter){
+        await twitter.download(post_url);
+        logger.success("All downloads are complete.");
+      }else{
+        logger.info('no plugin find')
+      }
     }catch(e){
       logger.error(`Download failed. ${JSON.stringify(e)}`);
+      logger.error(`Download failed. ${e}`);
     }
   }
 }

@@ -10,6 +10,37 @@ module.exports = class Misskey{
     this.orig_filename = orig_filename;
   }
 
+  async check(post_url){
+    let u;
+    try {
+      u = new URL(post_url);
+    } catch (e) {
+      return false;
+    }
+
+    // まずURLパターンで足切り
+    if (!/^\/notes\/[a-zA-Z0-9]+$/.test(u.pathname)) {
+      return false;
+    }
+
+    try {
+      // Misskeyは /api/meta にPOSTするとインスタンス情報が返る
+      const res = await fetch(`${u.origin}/api/meta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      if (!res.ok) return false;
+
+      const data = await res.json();
+      // Misskey特有のフィールド(version, features など)が含まれているかで判定
+      return typeof data === "object" && ("version" in data || "features" in data);
+    } catch (e) {
+      return false;
+    }
+  }
+
   async download(post_url){
     const parse_post_url = new URL(post_url);
 
