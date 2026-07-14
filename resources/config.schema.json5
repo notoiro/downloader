@@ -1,14 +1,24 @@
 {
-  MISSKEY_TOKEN: {
-    type: "string",
+  MISSKEY_TOKENS: {
+    type: "array",
     required: false,
     non_empty: false,
-    disallow: ["YOUR_TOKEN"],
-  },
-  MISSKEY_HOST: {
-    type: "string",
-    required: false,
-    non_empty: false,
-    disallow: ["YOUR_HOST"],
+    items: {
+      type: "object",
+      properties: {
+        host: {
+          type: "string",
+          required: true,
+          non_empty: true,
+          disallow: ["YOUR_TOKEN"],
+        },
+        token: {
+          type: "string",
+          required: true,
+          non_empty: true,
+          disallow: ["YOUR_HOST"],
+        }
+      }
+    }
   },
 }

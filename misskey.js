@@ -46,8 +46,9 @@ module.exports = class Misskey{
     const instance_domain = parse_post_url.protocol + "//" + parse_post_url.host;
     try{
       let header = { 'Content-Type': 'application/json' };
-      if(config.MISSKEY_HOST === parse_post_url.host){
-        if(config.MISSKEY_TOKEN) header.Authorization = `Bearer ${config.MISSKEY_TOKEN}`;
+      const token = config.MISSKEY_TOKENS.find(el => el.host === parse_post_url.host);
+      if(token){
+        header.Authorization = `Bearer ${token.token}`;
       }
 
       const res = await fetch(`${instance_domain}/api/notes/show`, {
