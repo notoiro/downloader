@@ -40,7 +40,7 @@ module.exports = class Misskey{
     }
   }
 
-  async download(post_url){
+  async download(post_url, from_clipboard = false){
     const parse_post_url = new URL(post_url);
     const note_id = parse_post_url.pathname.match(/notes\/(.+)/)[1];
     const instance_domain = parse_post_url.protocol + "//" + parse_post_url.host;
@@ -84,7 +84,7 @@ module.exports = class Misskey{
         const extension = file.name.match(/\.[a-zA-Z0-9]+$/);
         let filename = `mk_${post_user_name}_${post_host}_${post_id}_p${image_counter}${extension}`;
         if(this.orig_filename) filename = file.name;
-        await download(file.url, this.save_dir, filename);
+        await download(file.url, this.save_dir, filename, from_clipboard);
         image_counter++;
         logger.info(`File downloaded. (${file.name} also known as ${filename})`);
       }

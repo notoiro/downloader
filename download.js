@@ -6,6 +6,8 @@ const { Confirm } = require("enquirer");
 const logger = require('./log.js');
 const { Readable } = require('node:stream');
 const { pipeline } = require('node:stream/promises');
+const { Notify } = require('node-dbus-notifier');
+const os = require('os');
 
 function hashfile(path) {
   return new Promise((resolve, reject) => {
@@ -26,7 +28,37 @@ function hashstream(stream){
   });
 }
 
-module.exports = async (url, save_dir, filename) => {
+function select_notify(title, body){
+  return new Promise((resolve) => {
+    let answered = false;
+
+    const notify = new Notify({
+      appName: 'downloader',
+      appIcon: 'application-javascript', // The availability of icons depends on the current system icon set.
+      summary: title,
+      body: body,
+      timeout: 0,
+    });
+
+    notify.addAction('Yes', () => {
+      answered = true;
+      resolve(true);
+      notify.close();
+    });
+
+    notify.addAction('No', () => {
+      answered = true;
+      resolve(false);
+      notify.close();
+    });
+
+    notify.show().then(() => {
+      if (!answered) resolve(false);
+    });
+  })
+}
+
+module.exports = async (url, save_dir, filename, from_clipboard) => {
   let res;
   try{
     res = await fetch(url);
@@ -48,14 +80,23 @@ module.exports = async (url, save_dir, filename) => {
       const download_hash = await hashstream(stream1);
 
       if (exist_hash !== download_hash) {
-        logger.warn('A file with the same name but different contents already exists!');
-        logger.warn(`exist hash: ${exist_hash}, download hash: ${download_hash}`);
-        logger.warn(`file path: ${output_path}`);
-        const file_override_confirm = new Confirm({ message: "Override?" });
-        const confirm_result = await file_override_confirm.run();
-        if (!confirm_result) {
-          logger.info("Skipped.");
-          return "null";
+        if(from_clipboard && os.platform() === 'linux'){
+          const body = `A file with the same name but different contents already exists!\nfile path: ${output_path}`
+          const result = await select_notify('Override?', body);
+          if(!result){
+            logger.info("Skipped.");
+            return "null";
+          }
+        }else{
+          logger.warn('A file with the same name but different contents already exists!');
+          logger.warn(`exist hash: ${exist_hash}, download hash: ${download_hash}`);
+          logger.warn(`file path: ${output_path}`);
+          const file_override_confirm = new Confirm({ message: "Override?" });
+          const confirm_result = await file_override_confirm.run();
+          if (!confirm_result) {
+            logger.info("Skipped.");
+            return "null";
+          }
         }
       } else {
         logger.info('Skip because the file exists and the content is the same.');

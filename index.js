@@ -47,14 +47,14 @@ const main = async () => {
         const isMisskey = await misskey.check(current);
         const isTwitter = twitter.check(current); 
         if(isMisskey){
-          await misskey.download(current);
+          await misskey.download(current, true);
           notifier.notify({
             title: "downloader",
             message:"All downloads are complete." 
           });
           logger.success("All downloads are complete.");
         }else if(isTwitter){
-          await twitter.download(current);
+          await twitter.download(current, true);
           notifier.notify({
             title: "downloader",
             message:"All downloads are complete." 

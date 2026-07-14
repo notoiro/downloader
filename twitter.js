@@ -12,7 +12,7 @@ module.exports = class Twitter{
     return post_url_sp.length === 2 && post_url_sp[0] === "TWEET_INFO";
   }
 
-  async download(post_url){
+  async download(post_url, from_clipboard = false){
     try{
       const body = JSON.parse(post_url.split('\n')[1]);
 
@@ -33,7 +33,7 @@ module.exports = class Twitter{
         let filename = `tw_${post_user_name}_${post_id}_p${image_counter}${extension}`;
         if(this.orig_filename) filename = file.name;
 
-        await download(file.url, this.save_dir, filename);
+        await download(file.url, this.save_dir, filename, from_clipboard);
 
         image_counter++;
         logger.info(`File downloaded.`);

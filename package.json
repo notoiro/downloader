@@ -13,6 +13,7 @@
     "clipboardy": "^5.0.2",
     "enquirer": "^2.4.1",
     "json5": "^2.2.3",
+    "node-dbus-notifier": "^0.3.6",
     "node-notifier": "^10.0.1",
     "xa": "^2.4.0"
   }
